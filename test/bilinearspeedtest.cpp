@@ -226,7 +226,7 @@ void bilinearPublicPrivateTest() {
 }
 
 void bilinearTest(int setSize) {
-//    cout << "Bilinear-Map Accumulator test:" << endl;
+    cout << "Bilinear-Map Accumulator test:" << endl;
     //Initialize the thread pool for multithreading
     const int THREAD_POOL_SIZE = 16;
     ThreadPool threadPool(THREAD_POOL_SIZE);
@@ -246,7 +246,8 @@ void bilinearTest(int setSize) {
     for(unique_ptr<Scalar>& element : set) {
         setView.push_back(*element);
     }
-    cout << set.size() << endl;
+    //cout << set.size() << endl;
+    cout << "Read " << set.size() << " elements from file." << endl;
 
     //Generate public and private keys
     G1DCLXVI acc;
@@ -254,8 +255,8 @@ void bilinearTest(int setSize) {
     double keyStart = Profiler::getCurrentTime();
     BilinearMapAccumulator::genKey(vector<vector<reference_wrapper<Scalar>>>(), setSize, key, threadPool);
     double keyEnd = Profiler::getCurrentTime();
-//    cout << "Key generation took " << (keyEnd-keyStart) << " seconds" << endl;
-    cout << (keyEnd-keyStart) << endl;
+    cout << "Key generation took " << (keyEnd-keyStart) << " seconds" << endl;
+//    cout << (keyEnd-keyStart) << endl;
 
     //Output a "0" for time to generate prime representatives (for parity with RSA speed test)
     cout << "0" << endl;
@@ -264,16 +265,16 @@ void bilinearTest(int setSize) {
     double accStart = Profiler::getCurrentTime();
     BilinearMapAccumulator::accumulateSet(setView, key.getSecretKey(), acc);
     double accEnd = Profiler::getCurrentTime();
-//    cout << "Accumulated " << set.size() << " elements in " << (accEnd-accStart) << " seconds with private key" << endl;
-    cout << (accEnd-accStart) << endl;
+    cout << "Accumulated " << set.size() << " elements in " << (accEnd-accStart) << " seconds with private key" << endl;
+//    cout << (accEnd-accStart) << endl;
 
     //Accumulate the same values using only the public information
     G1DCLXVI accPub;
     double accPubStart = Profiler::getCurrentTime();
     BilinearMapAccumulator::accumulateSet(setView, key.getPublicKey(), accPub, threadPool);
     double accPubEnd = Profiler::getCurrentTime();
-//    cout << "Accumulated " << set.size() << " elements in " << (accPubEnd-accPubStart) << " seconds with public key" << endl;
-    cout << (accPubEnd-accPubStart) << endl;
+    cout << "Accumulated " << set.size() << " elements in " << (accPubEnd-accPubStart) << " seconds with public key" << endl;
+//    cout << (accPubEnd-accPubStart) << endl;
 
     if(!acc.isEqual(accPub)) {
         cout << "Error! Private and public accumulations do not match!" << endl;
@@ -292,8 +293,8 @@ void bilinearTest(int setSize) {
     double witStart = Profiler::getCurrentTime();
     BilinearMapAccumulator::witnessesForSet(setView, key.getSecretKey(), witnessBase, witnesses, threadPool);
     double witEnd = Profiler::getCurrentTime();
-//    cout << "Generated " << witnesses.size() << " witnesses in " << (witEnd-witStart) << " seconds with private key" << endl;
-    cout << (witEnd-witStart) << endl;
+    cout << "Generated " << witnesses.size() << " witnesses in " << (witEnd-witStart) << " seconds with private key" << endl;
+//    cout << (witEnd-witStart) << endl;
 
 
     //Generate witnesses with only the public information
@@ -304,8 +305,8 @@ void bilinearTest(int setSize) {
     double witPubStart = Profiler::getCurrentTime();
     BilinearMapAccumulator::witnessesForSet(setView, key.getPublicKey(), witnessesPublic, threadPool);
     double witPubEnd = Profiler::getCurrentTime();
-//    cout << "Generated " << witnesses.size() << " witnesses in " << (witPubEnd-witPubStart) << " seconds with public key" << endl;
-    cout << (witPubEnd-witPubStart) << endl;
+    cout << "Generated " << witnesses.size() << " witnesses in " << (witPubEnd-witPubStart) << " seconds with public key" << endl;
+//    cout << (witPubEnd-witPubStart) << endl;
 
 
     //Verify the values with the witnesses
@@ -317,8 +318,8 @@ void bilinearTest(int setSize) {
         }
     }
     double verifyEnd = Profiler::getCurrentTime();
-//    cout << "Verified " << witnesses.size() << " elements in " << (verifyEnd-verifyStart) << " seconds against private accumulator" << endl;
-    cout << (verifyEnd-verifyStart) << endl;
+    cout << "Verified " << witnesses.size() << " elements in " << (verifyEnd-verifyStart) << " seconds against private accumulator" << endl;
+//    cout << (verifyEnd-verifyStart) << endl;
 
     //Verify the public-key witnesses, just in case they're different
     double verifyPubStart = Profiler::getCurrentTime();
@@ -329,7 +330,7 @@ void bilinearTest(int setSize) {
         }
     }
     double verifyPubEnd = Profiler::getCurrentTime();
-//    cout << "Verified " << witnessesPublic.size() << " elements in " << (verifyPubEnd-verifyPubStart) << " seconds against public accumulator" << endl;
+    cout << "Verified " << witnessesPublic.size() << " elements in " << (verifyPubEnd-verifyPubStart) << " seconds against public accumulator" << endl;
     //This actually doesn't need to get measured and logged, since the time will
     //be the same as for verification with the private-key witnesses. It only
     //needs to run to guarantee correctness.
